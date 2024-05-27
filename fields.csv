@@ -1,0 +1,9 @@
+field_id,Nombre,País,lat,lon,dim
+1,Valle_Central,California,36.7378,-119.7871,0.095
+2,Pampa_Humeda,Argentina,-34.6037,-58.3816,0.095
+3,Delta_del_Nilo,Egipto,30.7960,31.1722,0.095
+4,Region_de_Punjab,India,31.1471,75.3412,0.095
+5,Region_del_Cerrado,Brasil,-15.7801,-47.9292,0.095
+6,Region_de_Champagne,Francia,49.0736,3.9580,0.095
+7,Valle_del_Yaqui,México,27.4828,-109.9308,0.095
+8,Region_de_Canterbury,Nueva Zelanda,-43.5321,172.6362,0.095

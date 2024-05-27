@@ -1,0 +1,31 @@
+# Entornos virtuales
+venv/
+env/
+
+# Archivos de caché
+__pycache__/
+
+# Archivos de caché de Windows
+Thumbs.db
+Desktop.ini
+
+# Archivos de caché de macOS
+.DS_Store
+
+# Logs y archivos temporales
+*.log
+*.pot
+*.pyc
+*.swp
+
+# Archivos de configuración local (incluyendo .env)
+.env
+
+# Carpeta de builds
+build/
+
+# Carpeta de distribución
+dist/
+
+# Carpeta de egg
+*.egg-info/

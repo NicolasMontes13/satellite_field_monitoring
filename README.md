@@ -11,17 +11,16 @@ Lista de los requisitos previos necesarios para ejecutar el proyecto, por ejempl
 - Pip
 - LocalStack
 
-## Uso
+## Funcionamiento
 
-Instrucciones para ejecutar y utilizar el proyecto, por ejemplo:
+El endpoint de API consta de los siguientes componentes:
 
-1. Ejecuta el script principal:
+1. **Entrada de Datos:** El usuario proporciona un `field_id` como parámetro de la solicitud.
 
-   ```bash
-   python main.py
-   ```
+2. **Consulta a la Base de Datos:** Utilizando el `field_id` proporcionado, se realiza una consulta al S3 para recuperar las imágenes asociadas a ese `field_id`.
 
-## Contacto
+3. **Creación del Archivo Zip:** Las imágenes recuperadas se empaquetan en un archivo zip.
 
-Nicolás Montes Gaitan
-nicolasmontesg2304@gmail.com
+4. **Respuesta de la API:** Se devuelve al usuario el archivo zip generado para su descarga.
+
+

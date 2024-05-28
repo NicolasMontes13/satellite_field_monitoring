@@ -23,4 +23,14 @@ El endpoint de API consta de los siguientes componentes:
 
 4. **Respuesta de la API:** Se devuelve al usuario el archivo zip generado para su descarga.
 
+## Funcionamiento API del NASA
+
+El proceso consta de los siguientes pasos:
+
+1. **Entrada de Datos:** Se proporciona una fecha específica y las coordenadas geográficas de una lista de campos.
+
+2. **Consulta a la API Earth de la NASA:** Utilizando la fecha y las coordenadas proporcionadas, se realizan consultas a la API Earth de la NASA para recuperar las imágenes disponibles para esas ubicaciones en esa fecha.
+
+3. **Descarga de Imágenes:** Se descargan las imágenes correspondientes a cada ubicación y se almacenan localmente para su posterior procesamiento o análisis.
+
 

@@ -1,14 +1,14 @@
+import sys
+sys.path.append(r'C:\Users\Nicolas Montes G\OneDrive\Desktop\Proyectos\Python\prueba_tecnica\satellite_field_monitoring')
+
 from fastapi import FastAPI, HTTPException, Path
 from fastapi.responses import StreamingResponse
 from localstack_client.session import Session
+from core.entities.constants import BUCKET_NAME
 import io
 import zipfile
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
 
-BUCKET_NAME = os.environ.get("BUCKET_NAME")
 
 app = FastAPI()
 
@@ -17,8 +17,10 @@ async def download_images(carpeta_id: str = Path(...)):
 
     session = Session()
 
-    s3 = session.client('s3', endpoint_url='http://localhost:4566')
-    s3.create_bucket(Bucket=BUCKET_NAME)
+    s3 = session.client('s3', 
+                        endpoint_url='http://localhost.localstack.cloud:4566')
+    
+    print(s3)
 
     response = s3.list_objects(Bucket=BUCKET_NAME, Prefix=f'{carpeta_id}')
 
@@ -37,3 +39,7 @@ async def download_images(carpeta_id: str = Path(...)):
 
 
     return StreamingResponse(io.BytesIO(zip_buffer.read()), media_type="application/octet-stream", headers={"Content-Disposition": f"attachement;filename={carpeta_id}.zip"})
+
+if __name__ == '__main__':
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

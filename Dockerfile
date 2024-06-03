@@ -5,16 +5,15 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Copiar los archivos de la aplicación
-COPY app/ .
+COPY requirements.txt .
 
 # Instalar las dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Asegurarse de que el script de entrada tenga permisos de ejecución
-RUN chmod +x entrypoint.sh
+COPY . .
 
 # Exponer el puerto en el que correrá la aplicación
 EXPOSE 8000
 
 # Comando para ejecutar la aplicación
-CMD ["./entrypoint.sh"]
+CMD ["uvicorn", "infra.api.fastapi.main:app", "--host", "0.0.0.0", "--port", "8000"]

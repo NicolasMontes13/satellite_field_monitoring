@@ -1,26 +1,39 @@
-import sys
-sys.path.append(r'C:\Users\Nicolas Montes G\OneDrive\Desktop\Proyectos\Python\prueba_tecnica\satellite_field_monitoring')
+# import sys
+# sys.path.append(r'C:\Users\Nicolas Montes G\OneDrive\Desktop\Proyectos\Python\prueba_tecnica\satellite_field_monitoring')
 
+from core.use_cases.get_images import get_images
 from fastapi import FastAPI, HTTPException, Path
 from fastapi.responses import StreamingResponse
 from localstack_client.session import Session
-from core.entities.constants import BUCKET_NAME
+import boto3
+from contextlib import asynccontextmanager
+from core.entities.constants import BUCKET_NAME, HOST
 import io
 import zipfile
+import logging
 
 
+logging.basicConfig(level=logging.INFO)
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logging.info("EJECUTANDO GET_IMAGES")
+    
+    get_images()
+    yield
+
+    logging.info("APP CERRANDOSE")
+
+
+app = FastAPI(lifespan=lifespan)
 
 @app.get("/download_images/{carpeta_id}")
 async def download_images(carpeta_id: str = Path(...)):
 
     session = Session()
 
-    s3 = session.client('s3', 
-                        endpoint_url='http://localhost.localstack.cloud:4566')
-    
-    print(s3)
+    s3 = boto3.client('s3', 
+                        endpoint_url=F'http://{HOST}:4566')
 
     response = s3.list_objects(Bucket=BUCKET_NAME, Prefix=f'{carpeta_id}')
 
@@ -39,7 +52,3 @@ async def download_images(carpeta_id: str = Path(...)):
 
 
     return StreamingResponse(io.BytesIO(zip_buffer.read()), media_type="application/octet-stream", headers={"Content-Disposition": f"attachement;filename={carpeta_id}.zip"})
-
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -7,3 +7,5 @@ def get_image(lon, lat):
     if response.status_code == 200:
         image_name = "_imagery.png"
         return response, image_name
+    else:
+        return response, "<<<<ERROR>>>>"

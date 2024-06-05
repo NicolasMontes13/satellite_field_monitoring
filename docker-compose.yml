@@ -1,18 +1,31 @@
 # docker-compose.yml
 version: "3.8"
 
+
+networks:
+  my_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
 services:
   localstack:
     container_name: "${LOCALSTACK_DOCKER_NAME:-localstack-main}"
     image: localstack/localstack
     ports:
-      - "127.0.0.1:4566:4566"            # LocalStack Gateway
-      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+      # Now only required if you need to access LocalStack from the host
+      - "4566:4566"            
+      # Now only required if you need to access LocalStack from the host
+      - "4571:4571"
     environment:
       - DEBUG=${DEBUG:-0}
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      my_network:
+        ipv4_address: 172.20.0.2
   fastapi:
     build: .
     ports:
@@ -24,3 +37,13 @@ services:
     environment:
       - ENVIRONMENT=production
       - PYTHONPATH=/app
+      - LOCALSTACK_HOSTNAME=172.20.0.2
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    networks:
+      my_network:
+        ipv4_address: 172.20.0.3  # Dirección IP fija para FastAPI (opcional)
+    dns:
+        - 172.20.0.2  # Dirección IP fija de LocalStack como servidor DNS
+  

@@ -1,32 +1,44 @@
-import sys
-sys.path.append(r'C:\Users\Nicolas Montes G\OneDrive\Desktop\Proyectos\Python\prueba_tecnica\satellite_field_monitoring')
-
-from core.entities.constants import BUCKET_NAME, DATE
+from core.entities.constants import BUCKET_NAME, DATE, HOST
 from infra.gateways.get_image import get_image
-from localstack_client.session import Session
+import boto3
+from botocore.exceptions import ClientError
 import pandas as pd
 import logging
 
-logging.basicConfig(level=logging.INFO)
 
+logging.basicConfig(level=logging.INFO)
 
 def get_images():
 
-    session = Session()
+    s3 = boto3.client('s3', 
+                        endpoint_url=f'http://{HOST}:4566')
+    
+    try:
+        s3.head_bucket(Bucket=BUCKET_NAME)
 
-    s3 = session.client('s3', 
-                        endpoint_url='http://localhost.localstack.cloud:4566')
+    except ClientError as e:
+        error_code = int(e.response['Error']['Code'])
+        if error_code == 404:
+            logging.info(f"el Bucket {BUCKET_NAME} no existe. Creándolo...")
 
-    fields = pd.read_csv(r'C:\Users\Nicolas Montes G\OneDrive\Desktop\Proyectos\Python\prueba_tecnica\satellite_field_monitoring\fields.csv')
+            s3.create_bucket(Bucket=BUCKET_NAME)
+
+            logging.info(f"Bucket {BUCKET_NAME} creado exitosamente.")
+        else:
+            logging.info(f"Error al verificar la existencia del bucket.")
+            raise
+
+    fields = pd.read_csv("/app/fields.csv")
     logging.info("CSV readed")
     for i in fields.index:
 
-        logging.info(f"Starting fields: {i}")
         field_id = str(fields["field_id"][i]) + "_" + str(fields["Nombre"][i])
         lon = fields["lon"][i]
         lat = fields["lat"][i]
         response, image_name = get_image(lon, lat)
-        logging.info(response.status_code)
+
+        if response.status_code == 400:
+            continue
         upload_to_s3(image_name, response, field_id, s3)
 
 def upload_to_s3(image_name, response, field_id, s3):
@@ -36,6 +48,4 @@ def upload_to_s3(image_name, response, field_id, s3):
 
     result = s3.get_object(Bucket=BUCKET_NAME, Key=key_name)
 
-if __name__ == '__main__':
-    get_images()
 

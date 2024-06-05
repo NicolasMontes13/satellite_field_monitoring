@@ -38,8 +38,6 @@ El proceso consta de los siguientes pasos:
 
 1. **Docker-compose** Para poder ejecutar el localstack y el uvicorn para la ejecucion de la fastapi; se hace la siguiente instruccion ---> **"docker-compose up --build"**
 
-2. **Ejecucion del script get_images.py** 
-
-3. **Prueba de la Fastapi**
+2. **Probar la API**
 
 
